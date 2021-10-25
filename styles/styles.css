@@ -1,0 +1,15 @@
+.video-data {
+    width: 400px;
+    margin: 60px auto;
+}
+.video-data .data .thumbnail img {
+    width: 100%;
+}
+
+.video-player {
+    width: 600px;
+}
+
+.video-player .video video {
+    width: 100%;
+}
