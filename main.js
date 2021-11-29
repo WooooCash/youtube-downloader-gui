@@ -24,8 +24,8 @@ app.on('ready', _ => {
         height: 680,
         minWidth: 940,
         minHeight: 560,
-        frame: false,
-        autoHideMenuBar: true,
+        //frame: false,
+        //autoHideMenuBar: true,
 
         // title: 'Youtube Downloader',
 
@@ -35,17 +35,10 @@ app.on('ready', _ => {
         }
     });
     win.loadFile('./src/index2.html');
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
     
 
-    axios.get('http://127.0.0.1:8000/items/1')
-      .then(response => {
-        console.log(response.data.url);
-        console.log(response.data.explanation);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    
 
     
 });
@@ -81,7 +74,7 @@ async function searchRequest(request) {
     console.log('begin search')
     let filters = await ytsr.getFilters(request);
     let filter = filters.get('Type').get('Video');
-    ytsr(filter.url, {limit: 20}).then(results => {
+    ytsr(filter.url, {limit: 21}).then(results => {
         console.log('searching')
         win.webContents.send('search-results', results);
     })

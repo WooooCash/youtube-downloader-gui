@@ -2,6 +2,8 @@ const ipc = require('electron').ipcRenderer;
 
 document.querySelector("#get-video-info-button").addEventListener("click", function() {
     ipc.send('videoURL', document.querySelector('#videoURL').value);
+    document.querySelector("#search").hidden = true;
+    document.querySelector("#videodata").hidden = false;
 })
 
 document.querySelector('#download-button').addEventListener("click", function() {
@@ -58,7 +60,47 @@ ipc.on('dinfo', (event, info) => {
     console.log(info);
 })
 
+
+
 ipc.on('search-results', (event, results) => {
-    console.log(results);
+    function gotoVideoOptions(videoElement) {
+        console.log("test w stringu");
+        console.log(videoElement);
+    }
+    document.querySelector("#search").hidden = true;
+    document.querySelector("#videodata").hidden = true;
+    results1 = results;
+    console.log(results.items);
+    let search_html = document.querySelector(".search-results");
+    search_html.hidden = false;
+    results.items.forEach(element => {
+        console.log("halo");
+        search_html.insertAdjacentHTML(
+            "beforeend",
+            
+            `<div class="card" style="width: 18rem; margin: 5px 0 5px 0 !important; background-color: white !important;">
+                <img class="card-img-top" src="${element.bestThumbnail.url}" alt="Card image cap">
+                <h5 class="card-title">${element.title}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${element.author.name}</h6>
+                <div class="card-body">
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+            </div>
+            `
+            
+        )
+        
+    })
+    
 })
+
+document.querySelector(".card").addEventListener("click", function() {
+    ipc.send('videoURL', document.querySelector('#videoURL').value);
+    document.querySelector("#search").hidden = true;
+    document.querySelector("#videodata").hidden = false;
+})
+
+// document.querySelectorAll(".card").onclick = function() {
+//     console.log('halo');
+// }
 

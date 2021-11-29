@@ -114,6 +114,10 @@ html, body{
     background-color: #272C36; 
     transition: 0.4s;
 }
+#sidebarlist > li:hover{
+    background-color:#768094 !important;
+    color: #d0d4dd !important;
+}
 .contentArea > .contentPages {
     width: 100%; 
     height: 100%;
@@ -123,6 +127,12 @@ html, body{
     /* -webkit-box-pack: center;  */
     /* display: -webkit-box; */
 }    
+.search-results{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    justify-content: space-evenly;
+}
 .video-data {
     width: 400px;
     margin: 60px auto;
