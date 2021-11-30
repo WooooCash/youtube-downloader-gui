@@ -3,7 +3,7 @@ const ipc = require('electron').ipcRenderer;
 document.querySelector("#get-video-info-button").addEventListener("click", function() {
     ipc.send('videoURL', document.querySelector('#videoURL').value);
     document.querySelector("#search").hidden = true;
-    document.querySelector("#videodata").hidden = false;
+    //document.querySelector("#videodata").hidden = false;
 })
 
 document.querySelector('#download-button').addEventListener("click", function() {
@@ -63,10 +63,6 @@ ipc.on('dinfo', (event, info) => {
 
 
 ipc.on('search-results', (event, results) => {
-    function gotoVideoOptions(videoElement) {
-        console.log("test w stringu");
-        console.log(videoElement);
-    }
     document.querySelector("#search").hidden = true;
     document.querySelector("#videodata").hidden = true;
     results1 = results;
@@ -74,11 +70,9 @@ ipc.on('search-results', (event, results) => {
     let search_html = document.querySelector(".search-results");
     search_html.hidden = false;
     results.items.forEach(element => {
-        console.log("halo");
         search_html.insertAdjacentHTML(
             "beforeend",
-            
-            `<div class="card" style="width: 18rem; margin: 5px 0 5px 0 !important; background-color: white !important;">
+            `<div class="card" style="width: 18rem; margin: 5px 0 5px 0 !important; background-color: white !important;" onclick="gotoVideoOptions('${element.url}')">
                 <img class="card-img-top" src="${element.bestThumbnail.url}" alt="Card image cap">
                 <h5 class="card-title">${element.title}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">${element.author.name}</h6>
@@ -94,11 +88,16 @@ ipc.on('search-results', (event, results) => {
     
 })
 
-document.querySelector(".card").addEventListener("click", function() {
-    ipc.send('videoURL', document.querySelector('#videoURL').value);
+function gotoVideoOptions(videoUrl) {
+    console.log("test w stringu");
+    console.log(videoUrl);
+    ipc.send('selected-video', videoUrl)
     document.querySelector("#search").hidden = true;
+    document.querySelector(".search-results").hidden = true;
     document.querySelector("#videodata").hidden = false;
-})
+}
+
+
 
 // document.querySelectorAll(".card").onclick = function() {
 //     console.log('halo');

@@ -24,8 +24,8 @@ app.on('ready', _ => {
         height: 680,
         minWidth: 940,
         minHeight: 560,
-        //frame: false,
-        //autoHideMenuBar: true,
+        frame: false,
+        autoHideMenuBar: true,
 
         // title: 'Youtube Downloader',
 
@@ -59,6 +59,9 @@ ipcMain.on('videoFormat', (event, videoFormat, videoURL, videoTitle) => {
     downloadWithFormat(videoURL, videoFormat, videoTitle);
 })
 
+ipcMain.on('selected-video', (event, videoURL) => {
+    handleURL(videoURL);
+})
 
 async function handleURL(vidURL) {
     ytdl.getInfo(vidURL).then(info => {
