@@ -1,93 +1,65 @@
 <html>
-  <head>
-    <title>My First App Width Electron</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="../styles/styles2.css" />
+	<head>
+		<title>My First App Width Electron</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="../styles/styles2.css" />
 
-    <!-- <script defer src-"js/appFunctions.js"></script> -->
-    <script defer src="../js/renderer.js"></script>
-  </head>
+		<!-- <script defer src-"js/appFunctions.js"></script> -->
+		<script defer src="../js/renderer.js"></script>
+		<script defer src="../js/renderer_window.js"></script>
+	</head>
 
-  <body>
-    <div class="mainApp">
-      <div class="topBar">
-        <div class="titleBar">
-          <button id="showHideMenus" class="toggleButton"></button>
-          <img src="icons/icon_top_bar.png" alt=""/>
-          <div class="title">Youtube Downloader</div>
-        </div>
-        <div class="titleBarBtns">
-          <button id="minimizeBtn" class="topBtn minimizeBtn"></button>
-          <button id="maxResBtn" class="topBtn maximizeBtn"></button>
-          <button id="closeBtn" class="topBtn closeBtn"></button>
-        </div>
-      </div>
-      <div class="contentArea">
-        <div id="mySidebar" class="leftMenu">
-            <ul id="sidebarlist" class="list-group bg-transparent">
-                <li class="list-group-item bg-transparent"  style="color: #949AA7">Dashboard</li>
-                <li class="list-group-item bg-transparent"  style="color: #949AA7">Search</li>
-                <li class="list-group-item bg-transparent"  style="color: #949AA7">Browse</li>
-            </ul>
-        </div>
-        <div class="contentPages">
-          <div class="h-100 container">
-            <div id="search" class="h-100 row justify-content-center">
-              <div class="col-8 align-self-center">
-                <div class="header" style="text-align: center">
-                  <h2>Youtube Video Search and Download</h2>
-                </div>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="videoURL"
-                    placeholder="Enter youtube url or search query"
-                    style="padding: 12px 20px"
-                  />
-                  <button
-                    class="btn btn-outline-secondary"
-                    id="get-video-info-button"
-                  >
-                    Search
-                  </button>
-                  <a href="./index.html">chuj</a>
-                </div>
-              </div>
-            </div>
-
-            <div id="videodata" class="video-data" hidden>
-              <div class="data">
-                <div class="thumbnail">
-                  <img />
-                </div>
-                <div class="info">
-                  <h2>Header</h2>
-                  <p>Paragraph</p>
-                </div>
-              </div>
-              <div class="controls">
-                <input type="hidden" id="video-url" />
-                <select name="" id="download-options"></select>
-                <button id="download-button">Download</button>
-              </div>
-            </div>
-            <div class="video-player" hidden>
-              <div class="video"></div>
-              <button id="load-video-button">Load Video</button>
-            </div>
-            <!-- <img class="colorPalette" src="images/color-palette.png" width="500" /> -->
-            <div class="search-results" hidden>
-  
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
+	<body>
+		<div class="mainApp">
+			<div class="topBar">
+				<div class="titleBar">
+					<button id="showHideMenus" class="toggleButton"></button>
+					<img src="icons/icon_top_bar.png" alt="" />
+					<div class="title">Youtube Downloader</div>
+				</div>
+				<div class="titleBarBtns">
+					<button
+						id="minimizeBtn"
+						class="topBtn minimizeBtn"
+					></button>
+					<button id="maxResBtn" class="topBtn maximizeBtn"></button>
+					<button id="closeBtn" class="topBtn closeBtn"></button>
+				</div>
+			</div>
+			<div class="contentArea">
+				<div id="mySidebar" class="leftMenu">
+					<ul id="sidebarlist" class="list-group bg-transparent">
+						<li
+							class="list-group-item bg-transparent"
+							style="color: #949aa7; cursor: pointer"
+							onclick="setDashboardPage()"
+						>
+							Dashboard
+						</li>
+						<li
+							class="list-group-item bg-transparent"
+							style="color: #949aa7; cursor: pointer"
+							onclick="setSearchPage()"
+						>
+							Search
+						</li>
+						<li
+							class="list-group-item bg-transparent"
+							style="color: #949aa7; cursor: pointer"
+						>
+							Browse
+						</li>
+					</ul>
+				</div>
+				<div class="contentPages">
+					<div class="h-100 container" id="content-container"></div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

@@ -19,7 +19,7 @@ let win;
 app.on("ready", (_) => {
 	win = new BrowserWindow({
 		width: 1200,
-		height: 680,
+		height: 780,
 		minWidth: 940,
 		minHeight: 560,
 		frame: false,
@@ -32,8 +32,9 @@ app.on("ready", (_) => {
 			contextIsolation: false
 		}
 	});
-	win.loadFile("./src/search.html");
-	win.webContents.openDevTools();
+	win.loadFile("./src/index2.html");
+	// win.webContents.openDevTools();
+	win.webContents.send("app-start");
 });
 
 ipcMain.on("close-window", () => {
@@ -71,14 +72,15 @@ async function handleURL(vidURL) {
 	// win.loadFile("./src/video_options.html");
 	ytdl.getInfo(vidURL)
 		.then((info) => {
-			console.log("sent info");
 			console.log("hi");
+			console.log(info);
 			win.webContents.send("vidInfo", info);
+			console.log("sent info");
 		})
 		.catch(function () {
 			// console.log("Unable to retreive video info")
 			// win.webContents.send('reject', 'Unable to retrieve video info');
-			win.loadFile("./src/search_results.html");
+			// win.loadFile("./src/search_results.html");
 			console.log("loaded and ready to search");
 			searchRequest(vidURL);
 		});
@@ -89,9 +91,11 @@ async function searchRequest(request) {
 	let filters = await ytsr.getFilters(request);
 	let filter = filters.get("Type").get("Video");
 	console.log("set filters. beginning search.");
-	let results = await ytsr(filter.url, { limit: 21 });
-	console.log("retreived results");
-	win.webContents.send("search-results", results);
+	ytsr(filter.url, { limit: 21 }).then((results) => {
+		console.log(results);
+		console.log("search finished");
+		win.webContents.send("search-results", results);
+	});
 	// .catch((err) => {
 	// 	console.log("unable to finish search: " + err);
 	// });
@@ -111,6 +115,7 @@ function downloadWithFormat(vidURL, vidFormat, vidTitle) {
 			if (progress != tracker.video) {
 				tracker.video = progress;
 				console.log("Video progress: " + tracker.video + "%");
+				win.webContents.send("update-progress", tracker.video, "video");
 			}
 		})
 		.on("error", (err) => {
@@ -126,6 +131,7 @@ function downloadWithFormat(vidURL, vidFormat, vidTitle) {
 			if (progress != tracker.audio) {
 				tracker.audio = progress;
 				console.log("Audio progress: " + tracker.audio + "%");
+				win.webContents.send("update-progress", tracker.audio, "audio");
 			}
 		})
 		.on("error", (err) => {
@@ -172,6 +178,7 @@ function downloadAudio(url, title) {
 			if (progress != tracker) {
 				tracker = progress;
 				console.log("Audio progress: " + tracker + "%");
+				win.webContents.send("update-progress", tracker, "audio");
 			}
 		})
 		.on("error", (err) => {
@@ -202,6 +209,7 @@ ipc.on("loadVideo", (event) => {
 
 function mergeFiles(vPath, aPath, oPath) {
 	console.log("merging...");
+	win.webContents.send("merging");
 	ffmpeg()
 		.addInput(vPath)
 		.addInput(aPath)
