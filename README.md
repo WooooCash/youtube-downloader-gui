@@ -19,7 +19,7 @@ sudo apt-get install ffmpeg
 
 **Windows**:
 
-Download ffmpeg binaries from https://www.gyan.dev/ffmpeg/builds/
+Download ffmpeg binaries from https://www.gyan.dev/ffmpeg/builds/ (I recommend *ffmpeg-release-essencials* in zip or 7z format)
 
 Extract files to desired location
 
