@@ -8,16 +8,21 @@ This is a youtube downloader app with a graphical interface. Download youtube vi
 
 ### Download ffmpeg
 
-Linux:
+**Linux**:
+
 download ffmpeg from your distributions package manager
+
 apt manager example:
 ```
 sudo apt-get install ffmpeg
 ```
 
-Windows:
+**Windows**:
+
 Download ffmpeg binaries from https://www.gyan.dev/ffmpeg/builds/
+
 Extract files to desired location
+
 Add the *bin* folder to Path in your systems environment variables
 
 
