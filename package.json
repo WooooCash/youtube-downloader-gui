@@ -21,6 +21,7 @@
     "ffmpeg": "0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "format-duration": "^1.4.0",
+    "get-video-duration": "^4.0.0",
     "ytdl-core": "^4.9.1",
     "ytsr": "^3.5.3"
   }

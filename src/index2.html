@@ -18,8 +18,11 @@
 		<div class="mainApp">
 			<div class="topBar">
 				<div class="titleBar">
-					<button id="showHideMenus" class="toggleButton"></button>
-					<img src="icons/icon_top_bar.png" alt="" />
+					<button
+						id="go-back"
+						class="toggleButton"
+						onclick="goBack()"
+					></button>
 					<div class="title">Youtube Downloader</div>
 				</div>
 				<div class="titleBarBtns">
@@ -51,6 +54,7 @@
 						<li
 							class="list-group-item bg-transparent"
 							style="color: #949aa7; cursor: pointer"
+							onclick="setBrowsePage()"
 						>
 							Browse
 						</li>

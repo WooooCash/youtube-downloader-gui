@@ -2,10 +2,46 @@ const ipc = require("electron").ipcRenderer;
 const format_seconds = require("format-duration");
 
 let container = document.querySelector("#content-container");
+let history = [{ html: "", state: "" }];
+let pageState = "";
 
 window.onload = setDashboardPage();
 
+function pushToHistory() {
+	if (
+		pageState != "clear" &&
+		history[history.length - 1].html != container.innerHTML
+	)
+		history.push({ html: container.innerHTML, state: pageState });
+}
+
+function goBack() {
+	console.log("history", history);
+	if (history.length > 1) {
+		let prev = history.pop();
+		console.log("prev", prev);
+		container.innerHTML = prev.html;
+		pageState = prev.state;
+		if (pageState == "search") {
+			document
+				.querySelector("#get-video-info-button")
+				.addEventListener("click", function () {
+					ipc.send(
+						"videoURL",
+						document.querySelector("#videoURL").value
+					);
+					clearPage("Loading...");
+				});
+		}
+	}
+}
+
+function removeFromHistory(amount) {
+	for (let i = 0; i < amount; i++) history.pop;
+}
+
 function clearPage(word) {
+	pageState = "clear";
 	container.innerHTML = `
 		<div class="row h-100 justify-content-center">
 			<div class="col-4 align-self-center">
@@ -16,6 +52,9 @@ function clearPage(word) {
 }
 
 function setSearchPage() {
+	pushToHistory();
+
+	pageState = "search";
 	console.log("setting search page");
 	container.innerHTML = `
 		<div
@@ -53,10 +92,16 @@ function setSearchPage() {
 }
 
 function setResultsPage() {
+	pushToHistory();
+
+	pageState = "results";
 	container.innerHTML = `<div class="search-results"></div>`;
 }
 
 function setVidOptionsPage() {
+	pushToHistory();
+
+	pageState = "options";
 	container.innerHTML = `
 					<div id="videodata" class="video-data w-100">
 						<h2>Loading...</h2>
@@ -64,6 +109,9 @@ function setVidOptionsPage() {
 }
 
 function setProgressPageAudio() {
+	pushToHistory();
+
+	pageState = "progress";
 	container.innerHTML = `
 		<div class="h-100 row justify-content-center">
 			<div class="col-8 align-self-center">
@@ -84,6 +132,9 @@ function setProgressPageAudio() {
 }
 
 function setProgressPageVideo() {
+	pushToHistory();
+
+	pageState = "progress";
 	container.innerHTML = `
 		<div class="h-100 row justify-content-center">
 			<div class="col-8 align-self-center">
@@ -116,6 +167,9 @@ function setProgressPageVideo() {
 }
 
 function setDashboardPage() {
+	if (history.length) pushToHistory();
+
+	pageState = "dash";
 	container.innerHTML = `
 		<div class="row text-center h-25 justify-content-center">
 			<div id="title-border" class="col-md-8 d-flex align-items-center justify-content-center">
@@ -143,16 +197,81 @@ function setDashboardPage() {
 	`;
 }
 
-function setBrowsePage() {}
+function setBrowsePage() {
+	pushToHistory();
 
-// document
-// 	.querySelector("#load-video-button")
-// 	.addEventListener("click", function () {
-// 		ipc.send("loadVideo");
-// 	});
+	pageState = "browse";
+	container.innerHTML = `
+		<div class="row text-center h-25 justify-content-center">
+			<div id="title-border" class="col-md-8 d-flex align-items-center justify-content-center">
+			</div>
+		</div>
+		<div class="row text-center h-50 justify-content-center">
+			<div class="col-md-4 text-center my-auto">
+				<div class="card card-block d-flex choice-card" >
+					<div class="card-body align-items-center d-flex justify-content-center"
+		                 onclick="request_files('audio')">
+						<h3>Audio</h3>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 text-center my-auto">
+				<div class="card card-block d-flex choice-card" >
+					<div class="card-body align-items-center d-flex justify-content-center" 
+						 onclick="request_files('videos')">
+						<h3>Video</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
+}
+
+function setBrowsefilesPage(files) {
+	pushToHistory();
+
+	pageState = "files";
+	let html = "";
+	for (const file of files) {
+		html += `
+			<div class="col">
+				<div class="card file-card h-100 text-center">
+					<div class="card-body">
+						<h5 class="card-title">${file.name}</h5>
+					</div>
+					<div class="card-footer">
+						<small class="tex-muted">${file.duration}</small>
+					</div>
+				</div>
+			</div>
+	`;
+	}
+
+	container.innerHTML = `
+		<div class="row file-browser row-cols-1 row-cols-md-3 g-4">
+			${html}
+		</div>
+	`;
+}
+
+function request_files(dir) {
+	pushToHistory();
+	clearPage("Retrieving Files...");
+	ipc.send("load-files", dir);
+}
+
+ipc.on("dir-info", (event, files) => {
+	setBrowsefilesPage(files);
+});
 
 ipc.on("merging", () => {
 	clearPage("Merging Files...");
+});
+
+ipc.on("finished-download", () => {
+	clearPage("");
+	setDashboardPage();
+	alert("Successfully downloaded file!");
 });
 
 ipc.on("test", (event, str) => {
@@ -170,14 +289,21 @@ ipc.on("vidInfo", (event, info) => {
 
 	let options = "";
 	console.log(info);
+	let optionlist = {};
 	for (let i = 0; i < info.formats.length; i++) {
 		let format = info.formats[i];
 		if (format.container != "mp4") continue;
 		console.log(format.itag);
-		if (![134, 135, 298, 299].includes(format.itag)) continue;
+		if ([18, 140].includes(format.itag)) continue;
+		let key = format.container + " - " + format.qualityLabel;
+		optionlist[key] = format.itag;
+	}
+
+	console.log("optionlist", optionlist);
+	for (const [key, value] of Object.entries(optionlist)) {
 		options += `
-            <option value="${format.itag}">
-                ${format.container} - ${format.qualityLabel}
+            <option value="${value}">
+				${key}
             </option>
         `;
 	}
@@ -244,6 +370,7 @@ ipc.on("vidInfo", (event, info) => {
 });
 
 function send_video_options(format) {
+	pushToHistory();
 	ipc.send(
 		"videoFormat",
 		document.querySelector("#download-options").value,
@@ -300,5 +427,6 @@ function gotoVideoOptions(videoUrl) {
 	console.log("test w stringu");
 	console.log(videoUrl);
 	ipc.send("selected-video", videoUrl);
+	pushToHistory();
 	clearPage("Loading...");
 }

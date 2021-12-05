@@ -8,6 +8,8 @@ const ytsr = require("ytsr");
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
 const path = require("path");
+const duration = require("get-video-duration").getVideoDurationInSeconds;
+const format_seconds = require("format-duration");
 
 const axios = require("axios");
 
@@ -65,6 +67,10 @@ ipcMain.on(
 
 ipcMain.on("selected-video", (event, videoURL) => {
 	handleURL(videoURL);
+});
+
+ipc.on("load-files", (event, dir) => {
+	loadFilesFromDir(dir);
 });
 
 async function handleURL(vidURL) {
@@ -191,8 +197,29 @@ function downloadAudio(url, title) {
 	audio.pipe(fs.createWriteStream(path.join(tempPath, title + ".mp3")));
 	audio.on("finish", function () {
 		//communicate that download is finished
+		win.webContents.send("finished-download");
 		console.log("done");
 	});
+}
+
+async function loadFilesFromDir(dir) {
+	let f_path = path.join(__dirname, "downloads", dir);
+	console.log("Retreiving files from " + f_path);
+	let files = fs.readdirSync(f_path);
+	files.splice(files.indexOf(".gitkeep"), 1);
+	console.log("files: ");
+	console.log(files);
+	let dir_info = [];
+	for (const file of files) {
+		console.log("checking out " + file);
+		const dur = await duration(path.join(f_path, file));
+		let file_duration = format_seconds(dur * 1000);
+		dir_info.push({
+			name: file.substring(0, file.length - 4),
+			duration: file_duration
+		});
+	}
+	win.webContents.send("dir-info", dir_info);
 }
 
 ipc.on("loadVideo", (event) => {
@@ -222,6 +249,7 @@ function mergeFiles(vPath, aPath, oPath) {
 			fs.unlink(aPath, (err) => {
 				if (err) console.log(err);
 			});
+			win.webContents.send("finished-download");
 		})
 		.run();
 }

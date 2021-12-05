@@ -44,7 +44,7 @@ body {
 	border: none;
 	outline: none;
 	background-color: transparent;
-	background-image: url("../icons/icon_menu.png");
+	background-image: url("../icons/back.png");
 	background-repeat: no-repeat;
 	background-position: center;
 	transition: 0.2s;
@@ -134,6 +134,14 @@ body {
 	margin: 0 auto;
 	justify-content: space-evenly;
 }
+
+/* .file-browser { */
+/* 	display: flex !important; */
+/* 	flex-wrap: wrap !important; */
+/* 	margin: 0 auto; */
+/* 	justify-content: space-evenly !important; */
+/* } */
+
 .video-data {
 	/* width: 600px; */
 	/* margin: 60px auto; */
@@ -185,6 +193,19 @@ body {
 }
 
 .search-results > .card:hover {
+	border: 1px solid #949aa7 !important;
+	transform: scale(1.05);
+}
+
+.file-card {
+	background-color: #272c36 !important;
+	color: #949aa7 !important;
+	/* width: 18rem; */
+	margin: 5px 0 5px 0 !important;
+	cursor: pointer;
+}
+
+.file-card:hover {
 	border: 1px solid #949aa7 !important;
 	transform: scale(1.05);
 }
