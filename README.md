@@ -10,7 +10,7 @@ This is a youtube downloader app with a graphical interface. Download youtube vi
 
 **Linux**:
 
-download ffmpeg from your distributions package manager
+download ffmpeg from your distribution's package manager
 
 apt manager example:
 ```
@@ -23,7 +23,7 @@ Download ffmpeg binaries from https://www.gyan.dev/ffmpeg/builds/
 
 Extract files to desired location
 
-Add the *bin* folder to Path in your systems environment variables
+Add the *bin* folder to Path in your system environment variables
 
 
 ### Download the Project
