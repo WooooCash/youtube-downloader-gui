@@ -26,6 +26,7 @@ function goBack() {
 			document
 				.querySelector("#get-video-info-button")
 				.addEventListener("click", function () {
+					pushToHistory();
 					ipc.send(
 						"videoURL",
 						document.querySelector("#videoURL").value
@@ -76,6 +77,7 @@ function setSearchPage() {
 					<button
 						class="btn btn-outline-secondary"
 						id="get-video-info-button"
+						onclick="onSearch()"
 					>
 						Search
 					</button>
@@ -83,12 +85,7 @@ function setSearchPage() {
 			</div>
 		</div>
 	`;
-	document
-		.querySelector("#get-video-info-button")
-		.addEventListener("click", function () {
-			ipc.send("videoURL", document.querySelector("#videoURL").value);
-			clearPage("Loading...");
-		});
+	
 }
 
 function setResultsPage() {
@@ -295,6 +292,12 @@ function requestPlayFile(path) {
 	if (path.includes("downloads/videos")) setVideoDisplayPage(path);
 	else if (path.includes("downloads/audio")) setAudioDisplayPage(path);
 	else console.log("error with file path");
+}
+
+function onSearch(){
+	pushToHistory();
+	ipc.send("videoURL", document.querySelector("#videoURL").value);
+	clearPage("Loading...");
 }
 
 function request_files(dir) {
