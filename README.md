@@ -31,13 +31,13 @@ Add the *bin* folder to Path in your system environment variables
 Clone the project
 
 ```
-git clone https://github.com/WooooCash/KCK_gui
+git clone https://github.com/WooooCash/youtube-downloader-gui
 ```
 
 Install dependencies
 
 ```
-cd KCK_gui
+cd youtube-downloader-gui
 ```
 ```
 npm install
