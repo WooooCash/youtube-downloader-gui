@@ -233,9 +233,10 @@ function setBrowsefilesPage(files) {
 	pageState = "files";
 	let html = "";
 	for (const file of files) {
+		console.log("setting path: ", file.path);
 		html += `
 			<div class="col">
-				<div class="card file-card h-100 text-center">
+				<div class="card file-card h-100 text-center" onclick="requestPlayFile('${file.path}')">
 					<div class="card-body">
 						<h5 class="card-title">${file.name}</h5>
 					</div>
@@ -254,11 +255,57 @@ function setBrowsefilesPage(files) {
 	`;
 }
 
+function setVideoDisplayPage(src) {
+	pushToHistory();
+
+	console.log("src", src);
+	pageState = "display";
+	container.innerHTML = `
+		<div class="row h-100 justify-content-center">
+			<div class="col-12 align-self-center">
+				<video width="100%" height="100%" autoplay controls>
+					<source src="${src}">
+				</video>
+			</div>
+		</div>
+	`;
+}
+
+function setAudioDisplayPage(src) {
+	pushToHistory();
+
+	pageState = "display";
+
+	container.innerHTML = `
+		<div class="row h-100 justify-content-center">
+			<div class="col-6 align-self-center justify-content-center">
+				<div align="center">
+					<audio src="${src}" controls autoplay>
+				</div>
+			</div>
+		</div>
+	`;
+}
+
+// <iframe class="embed-responsive-item" src="${src}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+
+function requestPlayFile(path) {
+	console.log("requesting to play file");
+	console.log("path", path);
+	if (path.includes("downloads/videos")) setVideoDisplayPage(path);
+	else if (path.includes("downloads/audio")) setAudioDisplayPage(path);
+	else console.log("error with file path");
+}
+
 function request_files(dir) {
 	pushToHistory();
 	clearPage("Retrieving Files...");
 	ipc.send("load-files", dir);
 }
+
+ipc.on("display-video", (event, path) => {
+	setVideoDisplayPage(path);
+});
 
 ipc.on("dir-info", (event, files) => {
 	setBrowsefilesPage(files);
@@ -325,7 +372,7 @@ ipc.on("vidInfo", (event, info) => {
 					</div>
 					<hr />
 					<div class="info">
-						<h2>${info.videoDetails.title.replaceAll("/", " - ")}</h2>
+						<h2>${info.videoDetails.title.replaceAll("/", " - ").replaceAll("?", "")}</h2>
 						<h4>${info.videoDetails.author.name}</h4>
 						<h5>Duration: ${format_seconds(
 							parseInt(info.videoDetails.lengthSeconds) * 1000

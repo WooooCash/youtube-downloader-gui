@@ -20,8 +20,8 @@ let win;
 
 app.on("ready", (_) => {
 	win = new BrowserWindow({
-		width: 1200,
-		height: 780,
+		width: 1470,
+		height: 810,
 		minWidth: 940,
 		minHeight: 560,
 		frame: false,
@@ -75,7 +75,6 @@ ipc.on("load-files", (event, dir) => {
 
 async function handleURL(vidURL) {
 	console.log("in handle url");
-	// win.loadFile("./src/video_options.html");
 	ytdl.getInfo(vidURL)
 		.then((info) => {
 			console.log("hi");
@@ -97,11 +96,16 @@ async function searchRequest(request) {
 	let filters = await ytsr.getFilters(request);
 	let filter = filters.get("Type").get("Video");
 	console.log("set filters. beginning search.");
-	ytsr(filter.url, { limit: 21 }).then((results) => {
-		console.log(results);
-		console.log("search finished");
-		win.webContents.send("search-results", results);
-	});
+	// ytsr(filter.url, { limit: 21 }).then((results) => {
+	// 	console.log(results);
+	// 	console.log("search finished");
+	// 	win.webContents.send("search-results", results);
+	// });
+
+	const results = await ytsr(filter.url, { pages: 1 });
+	console.log("done searching!");
+	win.webContents.send("search-results", results);
+
 	// .catch((err) => {
 	// 	console.log("unable to finish search: " + err);
 	// });
@@ -216,7 +220,9 @@ async function loadFilesFromDir(dir) {
 		let file_duration = format_seconds(dur * 1000);
 		dir_info.push({
 			name: file.substring(0, file.length - 4),
-			duration: file_duration
+			duration: file_duration,
+			// path: f_path + "/" + file
+			path: `../downloads/${dir}/${file}`
 		});
 	}
 	win.webContents.send("dir-info", dir_info);
